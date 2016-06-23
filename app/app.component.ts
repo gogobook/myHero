@@ -1,37 +1,51 @@
-import {Component,OnInit} from '@angular/core';
-import {Hero} from './hero';
-import {HeroDetailComponent} from './hero-detail.component';
-import {HeroService} from './hero.service'
+import { Component, OnInit } from '@angular/core';
+import { HeroService } from './hero.service';
+import { HeroesComponent } from './heroes.component';
+import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from '@angular/router-deprecated';
+import { DashboardComponent } from './dashboard.component';
+import { HeroDetailComponent } from './hero-detail.component';
 
 @Component({
     selector: 'my-app',
     template: `
         <h1>{{title}}</h1>
-        <h2>My Heroes</h2>
-        <ul class="heroes">
-            <li *ngFor="let hero of heroes" (click)="onSelect(hero)">
-                <span class="badge">{{hero.id}}</span> {{hero.name}}
-            </li>
-        </ul>
-        <my-hero-detail [hero]="selectedHero"></my-hero-detail>
-        
-    `,
-    directives:[HeroDetailComponent],
-    providers:[HeroService]
+        <nav>
+            <a [routerLink]="['Dashboard']">Dashboard</a>
+            <a [routerLink]="['Heroes']">Heroes</a>
+        </nav>
+        <router-outlet></router-outlet>
+        `,
+        directives: [ROUTER_DIRECTIVES],
+        providers: [
+            ROUTER_PROVIDERS,
+            HeroService
+        ]
 })
-export class AppComponent implements OnInit{
+@RouteConfig([
+    {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: DashboardComponent,
+        useAsDefault: true
+    },
+    {
+        path: '/heroes',
+        name: 'Heroes',
+        component: HeroesComponent
+    },
+    {
+        path: '/detail/:id',
+        name: 'HeroDetail',
+        component: HeroDetailComponent
+    }
+])
+export class AppComponent implements OnInit {
     title = 'Tour of Heroes';
-    selectedHero: Hero;     
-    heroes:Hero[];
-    constructor(private heroService: HeroService) {}
-    getHeroes(){
-        this.heroService.getHeroes().then(heroes=>this.heroes=heroes);
-    }
-    ngOnInit(){
-        this.getHeroes();
+
+    constructor() { }
+
+    ngOnInit() { 
+
     }
 
-
-    onSelect(hero: Hero){this.selectedHero=hero;}
 }
-
